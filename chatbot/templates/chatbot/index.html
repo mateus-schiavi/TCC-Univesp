@@ -1,0 +1,19 @@
+<!-- chatbot/templates/chatbot/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot EAD</title>
+</head>
+<body>
+    <h1>Assistente EAD</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="pergunta" placeholder="Digite sua pergunta">
+        <button type="submit">Enviar</button>
+    </form>
+
+    {% if resposta %}
+        <p><strong>Resposta:</strong> {{ resposta }}</p>
+    {% endif %}
+</body>
+</html>
