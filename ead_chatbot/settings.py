@@ -76,7 +76,11 @@ WSGI_APPLICATION = 'ead_chatbot.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'chatbot_db',
+        'USER': 'postgres',
+        'PASSWORD': 'capoeira',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
