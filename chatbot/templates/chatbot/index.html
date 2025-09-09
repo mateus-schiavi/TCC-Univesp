@@ -1,19 +1,31 @@
-<!-- chatbot/templates/chatbot/index.html -->
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Caminho correto para o CSS -->
+    <link rel="stylesheet" href="{% static 'chatbot/styles/styles.css' %}">
     <title>Chatbot EAD</title>
 </head>
 <body>
-    <h1>Assistente EAD</h1>
-    <form method="post">
-        {% csrf_token %}
-        <input type="text" name="pergunta" placeholder="Digite sua pergunta">
-        <button type="submit">Enviar</button>
-    </form>
+    <div class="chat-container">
+        <div id="chat">
+            {% for msg in historico %}
+                <p class="{{ msg.usuario }}">{{ msg.texto }}</p>
+            {% endfor %}
+        </div>
 
-    {% if resposta %}
-        <p><strong>Resposta:</strong> {{ resposta }}</p>
-    {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="pergunta" placeholder="Digite sua mensagem..." autocomplete="off" required>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chat');
+        chat.scrollTop = chat.scrollHeight;
+    </script>
 </body>
 </html>

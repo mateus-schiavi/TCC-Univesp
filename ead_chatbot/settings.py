@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+STATIC_URL = '/static/'
+
 
 # Application definition
 
@@ -75,7 +77,7 @@ WSGI_APPLICATION = 'ead_chatbot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'chatbot_db',
         'USER': 'postgres',
         'PASSWORD': 'capoeira',
