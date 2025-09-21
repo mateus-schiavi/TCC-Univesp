@@ -53,7 +53,7 @@ export default function Page() {
       const data = await response.json();
 
       // Adiciona a resposta do backend
-      setMessages(prev => [...prev, { type: 'received', text: data.resposta }]);
+      setMessages(prev => [...prev, { type: 'received', text: data.response }]);
     } catch (error) {
       console.error('Erro ao se comunicar com o backend:', error);
       setMessages(prev => [...prev, { type: 'received', text: 'Desculpe, ocorreu um erro.' }]);
