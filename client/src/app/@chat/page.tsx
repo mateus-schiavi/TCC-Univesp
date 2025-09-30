@@ -6,6 +6,7 @@ import "./dialog.css";
 import * as TanStackQuery from '@tanstack/react-query';
 
 import { Header } from './components/header';
+import { ChatContent } from './components/chatContent';
 import { FormText } from './components/form';
 import { ButtonOpenRobot } from './components/buttonOpenRobot';
 
@@ -20,6 +21,8 @@ export default function Page() {
         queryFn: getMessages,
         initialData: [{pergunta: '', resposta: 'Infelizmente estou encontrando problemas em me conectar.'}]});
 
+    const [optimistic, setOptimistic] = React.useOptimistic(query?.data);
+
     // query.fetchStatus
     // if(query.isLoading)
     // if(query.isPending)
@@ -29,17 +32,8 @@ export default function Page() {
         <>
             <dialog ref={ref} open={state}>
                 <Header reff={ref}/>
-                <div className='chat-content'>
-                    {
-                        query?.data?.map((q, i)=>(
-                            <React.Fragment key={i}>
-                            <div className='chat-message-item sent'>{q.pergunta}</div>
-                            <div className='chat-message-item received'>{q.resposta}</div>
-                            </React.Fragment>
-                        ))
-                    }
-                </div>
-                <FormText />
+                <ChatContent data={optimistic}/>
+                <FormText setOptimistic={setOptimistic}/>
             </dialog>
             <ButtonOpenRobot setState={setState}/>
         </>
