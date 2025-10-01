@@ -1,50 +1,13 @@
 'use client';
 
-import React from 'react';
-
 import "./dialog.css";
-
 import * as TanStackQuery from '@tanstack/react-query';
-
-import { Header } from './components/header';
-import { ChatContent } from './components/chatContent';
-import { FormText } from './components/form';
-import { ButtonOpenRobot } from './components/buttonOpenRobot';
+import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
+import svg_robot from './components/robot.svg';
 
 import type { IChatResponse } from '#/types/IChatResponse';
 import { getMessages } from './actions/getMessages';
-
-export default function Page() {
-    const ref = React.useRef<HTMLDialogElement>(null);
-    const [state, setState] = React.useState(false);
-    const query = TanStackQuery.useQuery<Array<IChatResponse>>({
-        queryKey:["messages"],
-        queryFn: getMessages,
-        initialData: [{pergunta: '', resposta: 'Infelizmente estou encontrando problemas em me conectar.'}]});
-
-    const [optimistic, setOptimistic] = React.useOptimistic(query?.data);
-
-    // query.fetchStatus
-    // if(query.isLoading)
-    // if(query.isPending)
-    // if(query.isError){ query.error }
-
-    return (
-        <>
-            <dialog ref={ref} open={state}>
-                <Header reff={ref}/>
-                <ChatContent data={optimistic}/>
-                <FormText setOptimistic={setOptimistic}/>
-            </dialog>
-            <ButtonOpenRobot setState={setState}/>
-        </>
-    )
-
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
-
-import './dialog.css';
-import svg_robot from './robot.svg';
 
 const SIZE = 30;
 
@@ -58,33 +21,55 @@ export default function Page() {
   const [messages, setMessages] = useState<Message[]>([
     { type: 'received', text: 'Olá, sou seu assistente virtual e vou lhe ajudar!' }
   ]);
-  const [loading, setLoading] = useState(false); // indicador de "digitando..."
+  const [loading, setLoading] = useState(false); 
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Scroll automático para a última mensagem
+  // 1) Buscar mensagens já existentes no backend com TanStack
+  const query = TanStackQuery.useQuery<Array<IChatResponse>>({
+    queryKey: ["messages"],
+    queryFn: getMessages,
+    initialData: [{ pergunta: '', resposta: 'Infelizmente estou encontrando problemas em me conectar.' }]
+  });
+
+  // 2) Carregar as mensagens iniciais no estado local
+  useEffect(() => {
+    if (query.data) {
+      const loaded = query.data
+      .filter(msg => msg.resposta !== undefined)
+      .map(msg => ({
+        type: 'received' as const,
+        text: msg.resposta!
+      }));
+      setMessages(prev => [...prev, ...loaded]);
+    }
+  }, [query.data]);
+
+  // 3) Scroll automático sempre que mensagens mudarem
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTop = contentRef.current.scrollHeight;
     }
   }, [messages, loading]);
 
+  // 4) Alterna abrir/fechar o diálogo
   const handleClick = () => setState(p => !p);
 
+  // 5) Envio de mensagens
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // ⚠️ impede que a página recarregue
+    e.preventDefault();
 
     const textarea = e.currentTarget.querySelector('textarea') as HTMLTextAreaElement;
     const userMessage = textarea.value.trim();
     if (!userMessage) return;
 
-    // Adiciona a mensagem do usuário
+    // adiciona a mensagem localmente (feedback instantâneo)
     setMessages(prev => [...prev, { type: 'sent', text: userMessage }]);
     textarea.value = '';
 
     try {
       setLoading(true);
 
-      // Chamada para o backend Django
+      // chamada ao backend
       const response = await fetch('http://127.0.0.1:8000/api/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,8 +78,11 @@ export default function Page() {
 
       const data = await response.json();
 
-      // Adiciona a resposta do backend
+      // adiciona resposta recebida
       setMessages(prev => [...prev, { type: 'received', text: data.response }]);
+
+      // opcional: invalidar o cache do TanStack para atualizar histórico
+      query.refetch();
     } catch (error) {
       console.error('Erro ao se comunicar com o backend:', error);
       setMessages(prev => [...prev, { type: 'received', text: 'Desculpe, ocorreu um erro.' }]);
@@ -138,5 +126,4 @@ export default function Page() {
       </button>
     </>
   );
-
 }

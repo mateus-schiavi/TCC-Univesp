@@ -5,7 +5,7 @@ type typeOptimistic = (action: IChatResponse[] | ((pendingState: IChatResponse[]
 
 export function FormText({setOptimistic}: {setOptimistic: typeOptimistic}){
     async function actionSubmit(formData:FormData){
-        const msg = formData.get('name_textarea')?.toString();
+        const msg = formData.get('name_textarea')?.toString() ?? '';
         const padrao = {pergunta: msg, resposta: "Aguarde um momento, estou pensando..."};
         setOptimistic(p=>[...p, padrao]);
 
