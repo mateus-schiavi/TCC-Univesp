@@ -11,7 +11,7 @@ const url = `${hostname}:${PORT}${path}`;
 export async function actionSubmit(formData: FormData) {
     // console.log('Action triggered');
     const msg = formData.get('name_textarea')?.toString();
-    const response = await fetch('http://localhost:3000/api',
+    const response = await fetch('http://localhost:3000/chat',
         {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
