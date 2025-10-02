@@ -21,26 +21,28 @@ export default function Page() {
   const [messages, setMessages] = useState<Message[]>([
     { type: 'received', text: 'Olá, sou seu assistente virtual e vou lhe ajudar!' }
   ]);
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // 1) Buscar mensagens já existentes no backend com TanStack
+  // 1) Buscar histórico do backend (sem initialData desnecessário)
   const query = TanStackQuery.useQuery<Array<IChatResponse>>({
     queryKey: ["messages"],
     queryFn: getMessages,
-    initialData: [{ pergunta: '', resposta: 'Infelizmente estou encontrando problemas em me conectar.' }]
+    staleTime: Infinity // evita reload automático
   });
 
-  // 2) Carregar as mensagens iniciais no estado local
+  // 2) Adicionar histórico do backend uma única vez
   useEffect(() => {
-    if (query.data) {
+    if (query.data && query.data.length > 0) {
       const loaded = query.data
-      .filter(msg => msg.resposta !== undefined)
-      .map(msg => ({
-        type: 'received' as const,
-        text: msg.resposta!
-      }));
-      setMessages(prev => [...prev, ...loaded]);
+        .filter(msg => msg.resposta)
+        .map(msg => ({ type: 'received' as const, text: msg.resposta! }));
+      // Evita duplicar mensagem inicial
+      setMessages(prev => {
+        // Remove a mensagem inicial duplicada caso já exista no backend
+        const filteredPrev = prev.filter(m => m.text !== loaded[0]?.text);
+        return [...filteredPrev, ...loaded];
+      });
     }
   }, [query.data]);
 
@@ -62,15 +64,14 @@ export default function Page() {
     const userMessage = textarea.value.trim();
     if (!userMessage) return;
 
-    // adiciona a mensagem localmente (feedback instantâneo)
+    // Feedback instantâneo
     setMessages(prev => [...prev, { type: 'sent', text: userMessage }]);
     textarea.value = '';
 
     try {
       setLoading(true);
 
-      // chamada ao backend
-      const response = await fetch('http://127.0.0.1:8000/chat/', {
+      const response = await fetch('http://127.0.0.1:8000/api/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ pergunta: userMessage })
@@ -78,10 +79,10 @@ export default function Page() {
 
       const data = await response.json();
 
-      // adiciona resposta recebida
+      // Adiciona resposta do bot
       setMessages(prev => [...prev, { type: 'received', text: data.response }]);
 
-      // opcional: invalidar o cache do TanStack para atualizar histórico
+      // Atualiza histórico
       query.refetch();
     } catch (error) {
       console.error('Erro ao se comunicar com o backend:', error);
