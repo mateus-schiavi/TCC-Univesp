@@ -1,4 +1,11 @@
-from .models import Resposta
+import os
+import django 
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ead_chatbot.settings")
+django.setup()
+from chatbot.models import Resposta
 
 respostas = [
     {"pergunta": "olá", "resposta": "Olá! Que bom te ver por aqui. Como posso ajudar nos seus estudos hoje?"},
