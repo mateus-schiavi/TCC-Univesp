@@ -8,7 +8,7 @@ import { ContactPage } from './components/ContactPage';
 import { Button } from './components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
 import { MessageCircle, X, Moon, Sun } from 'lucide-react';
-import robotIcon from './assets/robotIcon.png';
+import robotIcon from './assets/RobotIcon.png';
 
 
 export default function App() {

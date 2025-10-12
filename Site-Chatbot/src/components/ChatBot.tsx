@@ -50,25 +50,31 @@ const predefinedQA = [
 ];
 
 
-async function sendMessage(userMessage : string) {
-
-    try {
+async function sendMessage(userMessage: string) {
+  try {
     const response = await fetch('http://127.0.0.1:8000/api/chat/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({ pergunta: userMessage }),
     });
- 
-    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
- 
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
     const data = await response.json();
-    return data.response; // texto da resposta do bot
+    return data.response ?? "Erro: resposta vazia do servidor.";
   } catch (error) {
-    console.error('Erro ao se comunicar com o backend:', error);
+    console.error('Erro no fetch do backend:', error);
     return 'Desculpe, ocorreu um erro ao se comunicar com o servidor.';
   }
 }
-  
+
+
 export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage }: ChatBotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -90,85 +96,103 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async () => {
-    if (!inputText.trim()) return;
+  const handleSendMessage = async (messageText?: string) => {
+  const textToSend = messageText ?? inputText;
+  if (!textToSend.trim()) return;
 
-    playSound?.('message');
+  playSound?.('message');
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      text: inputText,
-      isBot: false,
-      timestamp: new Date()
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    text: textToSend,
+    isBot: false,
+    timestamp: new Date(),
+  };
+
+  setMessages(prev => [...prev, userMessage]);
+  setInputText('');
+  setIsTyping(true);
+
+  try {
+    // 1️⃣ Primeiro, tenta resposta rápida local
+    let responseText = getBotResponse(textToSend);
+
+    // 2️⃣ Se getBotResponse retornou a mensagem padrão, manda para o backend
+    if (responseText.startsWith("Olá! 👋")) {
+      responseText = await sendMessage(textToSend);
+    }
+
+    const botMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: responseText,
+      isBot: true,
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, newMessage]);
-    setInputText('');
-    setIsTyping(true);
+    setMessages(prev => [...prev, botMessage]);
+  } catch (error) {
+    console.error(error);
+    const botMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: "Desculpe, ocorreu um erro ao se comunicar com o servidor.",
+      isBot: true,
+      timestamp: new Date(),
+    };
+    setMessages(prev => [...prev, botMessage]);
+  } finally {
+    setIsTyping(false);
+    scrollToBottom();
+  }
+};
 
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        text: getBotResponse(inputText),
-        isBot: true,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1000);
-  };
+
 
   const getBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
-    
+
     // Check if question matches any predefined question
     for (const qa of predefinedQA) {
       if (message.includes(qa.question.toLowerCase().substring(0, 10))) {
         return qa.answer;
       }
     }
-    
+
     // Keyword matching for other topics
     if (message.includes('derivada') || message.includes('calcular derivadas')) {
       return predefinedQA[0].answer;
     }
-    
+
     if (message.includes('integral')) {
       return predefinedQA[1].answer;
     }
-    
+
     if (message.includes('equação') || message.includes('2° grau') || message.includes('bhaskara')) {
       return predefinedQA[2].answer;
     }
-    
+
     if (message.includes('newton') || message.includes('força') || message.includes('dinâmica')) {
       return predefinedQA[3].answer;
     }
-    
+
     if (message.includes('matriz') || message.includes('matrizes')) {
       return predefinedQA[4].answer;
     }
-    
+
     if (message.includes('energia') || message.includes('cinética')) {
       return predefinedQA[5].answer;
     }
-    
+
     // Default introduction message
     return 'Olá! 👋 Sou o Cogni.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta sugerida abaixo ou digite sua dúvida específica sobre qualquer tópico de exatas.';
   };
 
   const handleQuickQuestion = (question: string) => {
     playSound?.('click');
-    setInputText(question);
-    // Auto-send after a brief delay
-    setTimeout(() => {
-      handleSendMessage();
-    }, 100);
+    handleSendMessage(question);
   };
 
   return (
-    <motion.div 
+    <motion.div
       className={`${isDialog ? 'h-full flex flex-col' : 'fixed inset-0 flex items-center justify-center p-4 sm:p-6'} ${isDialog ? '' : 'pt-20 sm:pt-24'}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -192,9 +216,9 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
             </div>
             <div className="flex items-center space-x-1">
               {isDialog && onExpandToPage && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={onExpandToPage}
                   className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300"
                   title="Expandir para página completa"
@@ -215,15 +239,13 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className={`flex items-start space-x-2 sm:space-x-3 ${
-                  !message.isBot ? 'flex-row-reverse space-x-reverse' : ''
-                }`}
+                className={`flex items-start space-x-2 sm:space-x-3 ${!message.isBot ? 'flex-row-reverse space-x-reverse' : ''
+                  }`}
               >
-                <Avatar className={`w-7 h-7 sm:w-8 sm:h-8 ${
-                  message.isBot 
-                    ? 'bg-white p-0' 
+                <Avatar className={`w-7 h-7 sm:w-8 sm:h-8 ${message.isBot
+                    ? 'bg-white p-0'
                     : 'bg-gradient-to-r from-green-500 to-blue-500'
-                } flex-shrink-0`}>
+                  } flex-shrink-0`}>
                   {message.isBot ? (
                     <img src={robotIcon} alt="Bot" className="w-full h-full object-cover rounded-full" />
                   ) : (
@@ -232,29 +254,28 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                     </AvatarFallback>
                   )}
                 </Avatar>
-                
+
                 <div className={`flex-1 max-w-[85%] sm:max-w-[80%] ${!message.isBot ? 'flex justify-end' : ''}`}>
                   <div
-                    className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${
-                      message.isBot
-                        ? isDarkMode 
+                    className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${message.isBot
+                        ? isDarkMode
                           ? 'bg-gray-700/80 text-white border border-gray-600/50'
                           : 'bg-white/10 text-white border border-white/20'
                         : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                    }`}
+                      }`}
                   >
                     <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
                     <p className="text-[10px] sm:text-xs opacity-70 mt-1">
-                      {message.timestamp.toLocaleTimeString('pt-BR', { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                      {message.timestamp.toLocaleTimeString('pt-BR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
                       })}
                     </p>
                   </div>
                 </div>
               </motion.div>
             ))}
-            
+
             {isTyping && (
               <div className="flex items-start space-x-2 sm:space-x-3">
                 <Avatar className="w-7 h-7 sm:w-8 sm:h-8 bg-white p-0 flex-shrink-0">
@@ -287,11 +308,10 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                   variant="outline"
                   size="sm"
                   onClick={() => handleQuickQuestion(qa.question)}
-                  className={`text-[10px] sm:text-xs rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 h-auto ${
-                    isDarkMode 
-                      ? 'text-white bg-gray-700 border-gray-600 hover:bg-[#003A88]' 
+                  className={`text-[10px] sm:text-xs rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 h-auto ${isDarkMode
+                      ? 'text-white bg-gray-700 border-gray-600 hover:bg-[#003A88]'
                       : 'text-white bg-white/10 border-white/30 hover:bg-[#003A88]'
-                  } transition-all duration-300`}
+                    } transition-all duration-300`}
                   title={qa.question}
                 >
                   {qa.question.length > 20 ? qa.question.substring(0, 20) + '...' : qa.question}
@@ -310,11 +330,10 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Digite sua mensagem..."
-                className={`flex-1 text-xs sm:text-sm ${
-                  isDarkMode
+                className={`flex-1 text-xs sm:text-sm ${isDarkMode
                     ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-500'
                     : 'bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40'
-                } transition-colors duration-300`}
+                  } transition-colors duration-300`}
               />
               <Button
                 onClick={handleSendMessage}
