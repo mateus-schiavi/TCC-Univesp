@@ -38,7 +38,7 @@ dialog {
     box-shadow: .5rem .5rem 2rem rgba(0, 0, 0, 1);
 
     .chat-header {
-        background: gray;
+        background: green;
         justify-content: space-between;
 
         image {
