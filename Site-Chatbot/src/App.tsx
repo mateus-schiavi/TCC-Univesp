@@ -8,7 +8,8 @@ import { ContactPage } from './components/ContactPage';
 import { Button } from './components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
 import { MessageCircle, X, Moon, Sun } from 'lucide-react';
-import robotIcon from 'figma:asset/b6cbe31ea9593f79b0c04f52642bd6274536158e.png';
+import robotIcon from './assets/robotIcon.png';
+
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'chatbot' | 'demo' | 'javastudy' | 'team' | 'contact'>('home');

@@ -5,7 +5,7 @@ import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Maximize2, HelpCircle } from 'lucide-react';
 import { motion } from 'motion/react';
-import robotIcon from 'figma:asset/b6cbe31ea9593f79b0c04f52642bd6274536158e.png';
+import robotIcon from '../assets/robotIcon.png';
 
 interface Message {
   id: string;
@@ -49,6 +49,26 @@ const predefinedQA = [
   }
 ];
 
+
+async function sendMessage(userMessage : string) {
+
+    try {
+    const response = await fetch('http://127.0.0.1:8000/api/chat/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pergunta: userMessage }),
+    });
+ 
+    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+ 
+    const data = await response.json();
+    return data.response; // texto da resposta do bot
+  } catch (error) {
+    console.error('Erro ao se comunicar com o backend:', error);
+    return 'Desculpe, ocorreu um erro ao se comunicar com o servidor.';
+  }
+}
+  
 export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage }: ChatBotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {

@@ -4,7 +4,8 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Bot, Minimize2, HelpCircle, Star, BookOpen, Calculator, Beaker, Globe } from 'lucide-react';
-import robotIcon from 'figma:asset/b6cbe31ea9593f79b0c04f52642bd6274536158e.png';
+import robotIcon from '../assets/robotIcon.png';
+
 
 interface Message {
   id: string;

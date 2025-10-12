@@ -4,7 +4,8 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Minimize2, HelpCircle, Star, BookOpen, Calculator, Beaker, Globe, Code } from 'lucide-react';
-import robotIcon from 'figma:asset/b6cbe31ea9593f79b0c04f52642bd6274536158e.png';
+import robotIcon from '../assets/RobotIcon.png';
+
 
 interface Message {
   id: string;
@@ -53,7 +54,7 @@ export function JavaStudyPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   };
 
   useEffect(() => {
