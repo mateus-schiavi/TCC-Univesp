@@ -9,6 +9,7 @@ import { Button } from './components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
 import { MessageCircle, X, Moon, Sun } from 'lucide-react';
 import { Message } from './types';
+import { cn } from './components/ui/utils';
 import robotIcon from './assets/RobotIcon.png';
 import Logo from './assets/logo.png';
 
@@ -84,34 +85,63 @@ export default function App() {
             </div>
 
             <div className="flex items-center space-x-2 sm:space-x-6">
+              {/* Botão Início */}
               <Button
-                variant="ghost"
+                variant="ghost" // Sempre ghost
                 onClick={() => { playSound('click'); setCurrentPage('home'); }}
-                className="text-white hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
+                className={cn(
+                  "hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer", // Classes base + hover
+                  currentPage === 'home'
+                    ? 'text-white underline underline-offset-4' // Estilo ativo
+                    : 'text-blue-200 hover:text-white' // Estilo inativo
+                )}
               >
                 Início
               </Button>
+
+              {/* Botão Chatbot */}
               <Button
-                variant={currentPage === 'chatbot' ? 'secondary' : 'ghost'}
+                variant="ghost" // Sempre ghost
                 onClick={() => { playSound('click'); setCurrentPage('chatbot'); }}
-                className="text-white hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
+                className={cn(
+                  "hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer", // Classes base + hover
+                  currentPage === 'chatbot'
+                    ? 'text-white underline underline-offset-4' // Estilo ativo
+                    : 'text-blue-200 hover:text-white' // Estilo inativo
+                )}
               >
                 Chatbot
               </Button>
+
+              {/* Botão Equipe */}
               <Button
-                variant={currentPage === 'team' ? 'secondary' : 'ghost'}
+                variant="ghost" // Sempre ghost
                 onClick={() => { playSound('click'); setCurrentPage('team'); }}
-                className="text-white hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
+                className={cn(
+                  "hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer", // Classes base + hover
+                  currentPage === 'team'
+                    ? 'text-white underline underline-offset-4' // Estilo ativo
+                    : 'text-blue-200 hover:text-white' // Estilo inativo
+                )}
               >
                 Equipe
               </Button>
+
+              {/* Botão Contato */}
               <Button
-                variant={currentPage === 'contact' ? 'secondary' : 'ghost'}
+                variant="ghost" // Sempre ghost
                 onClick={() => { playSound('click'); setCurrentPage('contact'); }}
-                className="text-white hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4"
+                className={cn(
+                  "hover:bg-[#003A88] transition-all duration-300 text-xs sm:text-sm px-2 sm:px-4 cursor-pointer", // Classes base + hover
+                  currentPage === 'contact'
+                    ? 'text-white underline underline-offset-4' // Estilo ativo
+                    : 'text-blue-200 hover:text-white' // Estilo inativo
+                )}
               >
                 Contato
               </Button>
+
+              {/* Botão Dark Mode (sem alterações) */}
               <Button
                 variant="ghost"
                 onClick={toggleDarkMode}

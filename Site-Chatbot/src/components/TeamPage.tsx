@@ -19,12 +19,12 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
 
     {
       name: "Elessandro Marquezim",
-      role: "Gerente de Projeto/ Product Owner",
+      role: "Gerente de Projeto/Product Owner e Experiência do Usuário",
       image: "../src/assets/fotoElessandroMarquezim.png"    
     },
     {
       name: "Rafael Ferreira",
-      role: "Gerente de Projeto/ Product Owner e Especialista em Educação ",
+      role: "Gerente de Projeto/ Product Owner e Especialista em Educação",
       image: "../src/assets/fotoRafaelFerreira.png"
     },
     {
@@ -55,7 +55,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
 
     {
       name: "Marcelo Junior",
-      role: "Desenvolvedor Backend e Frotend",
+      role: "Desenvolvedor Backend/Frotend e Experiência do Usuário",
       image: "../src/assets/fotoMarceloJunior.png"    
     }
   ];
@@ -79,7 +79,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
             Conheça Nossa Equipe
           </h1>
           <p className="text-base sm:text-lg lg:text-xl text-blue-200 max-w-3xl mx-auto mb-3 sm:mb-4 px-4">
-            O time de especialistas por trás do Cogni.IA
+            O time de especialistas por trás do Kombot.IA
           </p>
           <p className="text-sm sm:text-base lg:text-lg text-blue-300 max-w-2xl mx-auto px-4">
             Profissionais dedicados a revolucionar a educação através da inteligência artificial
@@ -91,14 +91,15 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
           {teamMembers.map((member, index) => (
             <motion.div
               key={index}
+              className="h-full"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 + index * 0.1, duration: 0.5 }}
             >
               <Card
-                className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-white/10 border-white/20'} backdrop-blur-sm hover:bg-white/15 transition-all duration-300 group overflow-hidden`}
+                className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-white/10 border-white/20'} backdrop-blur-sm hover:bg-white/15 transition-all duration-300 group overflow-hidden h-full flex flex-col`}
               >
-                <div className="p-6">
+                <div className="p-6 flex flex-col h-full">
                   {/* Avatar */}
                   <div className="mb-4 flex justify-center">
                     <div className="relative">
@@ -115,22 +116,22 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
                   </div>
 
                   {/* Member Info */}
-                  <div className="text-center mb-4">
+                  <div className="text-center mb-4 flex-grow">
                     <h3 className="text-white mb-1 text-sm sm:text-base">{member.name}</h3>
-                    <p className="text-xs sm:text-sm text-blue-300">{member.role}</p>
+                    <p className="text-xs sm:text-sm text-blue-300 min-h-[2.5rem]">{member.role}</p>
                   </div>
 
                   {/* Social Links */}
-                  <div className="flex justify-center space-x-3">
-                    <button className={`w-8 h-8 ${isDarkMode ? 'bg-gray-700 hover:bg-[#003A88]' : 'bg-white/10 hover:bg-[#003A88]'} rounded-full flex items-center justify-center text-white transition-all duration-300`}>
+                  <div className="flex justify-center space-x-3 mt-auto">
+                    <button className={`w-8 h-8 ${isDarkMode ? 'bg-gray-700 hover:bg-[#003A88]' : 'bg-white/10 hover:bg-[#003A88]'} rounded-full flex items-center justify-center text-white transition-all duration-300 `}>
                       <Linkedin className="w-4 h-4" />
                     </button>
                     <button className={`w-8 h-8 ${isDarkMode ? 'bg-gray-700 hover:bg-[#003A88]' : 'bg-white/10 hover:bg-[#003A88]'} rounded-full flex items-center justify-center text-white transition-all duration-300`}>
                       <Github className="w-4 h-4" />
                     </button>
-                    <button className={`w-8 h-8 ${isDarkMode ? 'bg-gray-700 hover:bg-[#003A88]' : 'bg-white/10 hover:bg-[#003A88]'} rounded-full flex items-center justify-center text-white transition-all duration-300`}>
+                    {/* <button className={`w-8 h-8 ${isDarkMode ? 'bg-gray-700 hover:bg-[#003A88]' : 'bg-white/10 hover:bg-[#003A88]'} rounded-full flex items-center justify-center text-white transition-all duration-300`}>
                       <Mail className="w-4 h-4" />
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </Card>
@@ -139,7 +140,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
         </div>
 
         {/* Stats Section */}
-        <motion.div 
+        {/* <motion.div 
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -161,7 +162,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
             <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-1 sm:mb-2">99%</div>
             <p className="text-blue-200 text-xs sm:text-sm">Satisfação</p>
           </Card>
-        </motion.div>
+        </motion.div> */}
 
         {/* Values Section */}
         <motion.div

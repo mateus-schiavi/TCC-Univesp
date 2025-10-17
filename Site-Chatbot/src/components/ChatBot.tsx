@@ -214,7 +214,7 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
       <div className={`${isDialog ? 'h-full flex flex-col' : 'w-full max-w-4xl h-[calc(100vh-8rem)] sm:h-[600px] flex flex-col'}`}>
         {/* Chat Header */}
         {/* <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300`}> */}
-        <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300 shrink-0`}>
+        <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300 shrink-0 cursor-pointer`}>
           <div className="flex items-center justify-between p-3 sm:p-4">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Avatar className="w-10 h-10 sm:w-12 sm:h-12 bg-white p-0 border-2 border-white/30">
