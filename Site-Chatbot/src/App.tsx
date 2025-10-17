@@ -8,6 +8,7 @@ import { ContactPage } from './components/ContactPage';
 import { Button } from './components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
 import { MessageCircle, X, Moon, Sun } from 'lucide-react';
+import { Message } from './types';
 import robotIcon from './assets/RobotIcon.png';
 import Logo from './assets/logo.png';
 
@@ -16,6 +17,21 @@ export default function App() {
   const [showFloatingChat, setShowFloatingChat] = useState(true);
   const [isChatDialogOpen, setIsChatDialogOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Estado das mensagens elevado para App
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 'initial-1', // Usar ID diferente para evitar conflito inicial
+      text: 'Olá! 👋 Sou o Kombot.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta abaixo ou digite sua dúvida.',
+      isBot: true,
+      timestamp: new Date()
+    }
+  ]);
+
+  // Função para adicionar mensagens (passada para ChatBot)
+  const addMessage = (message: Message) => {
+    setMessages(prev => [...prev, message]);
+  };
 
   // Sound effects
   const playSound = (type: 'message' | 'click' | 'toggle') => {
@@ -115,8 +131,10 @@ export default function App() {
         {currentPage === 'chatbot' && (
           <ChatBot
             isDarkMode={isDarkMode}
-
             playSound={playSound}
+            messages={messages}
+            addMessage={addMessage}
+
             // Modificada para abrir o diálogo na Home
             onMinimizeToHome={() => {
               playSound('click');
@@ -168,26 +186,28 @@ export default function App() {
           <DialogContent className="max-w-[90vw] sm:max-w-md h-[80vh] sm:h-[600px] bg-transparent border-0 p-0 overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl chatbot-dialog-content flex flex-col">
             {/* <div className="h-full flex flex-col">
               <div className="flex-1 overflow-hidden"> */}
-                {/* Alterado aqui -> adicionado minimizar e close */}
-                <ChatBot
-                  isDialog={true}
-                  isDarkMode={isDarkMode}
-                  playSound={playSound}
-                  onExpandToPage={() => {
-                    playSound('click');
-                    setIsChatDialogOpen(false);
-                    setCurrentPage('chatbot');
-                  }}
-                  onMinimize={() => {
-                    playSound('click');
-                    setIsChatDialogOpen(false);
-                  }}
-                  onClose={() => { // Adicionado onClose aqui
-                    playSound('click');
-                    setIsChatDialogOpen(false);
-                  }}
-                />
-              {/* </div>
+            {/* Alterado aqui -> adicionado minimizar e close */}
+            <ChatBot
+              isDialog={true}
+              isDarkMode={isDarkMode}
+              playSound={playSound}
+              messages={messages}
+              addMessage={addMessage}
+              onExpandToPage={() => {
+                playSound('click');
+                setIsChatDialogOpen(false);
+                setCurrentPage('chatbot');
+              }}
+              onMinimize={() => {
+                playSound('click');
+                setIsChatDialogOpen(false);
+              }}
+              onClose={() => { // Adicionado onClose aqui
+                playSound('click');
+                setIsChatDialogOpen(false);
+              }}
+            />
+            {/* </div>
             </div> */}
           </DialogContent>
         </Dialog>

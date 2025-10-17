@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Maximize2, HelpCircle, Minus, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from './ui/utils';
+import { Message } from '../types';
 import robotIcon from '../assets/robotIcon.png';
 import Logo from '../assets/logo.png';
 
@@ -26,6 +27,8 @@ interface ChatBotProps {
   onClose?: () => void;
   onMinimizeToHome?: () => void;
   onCloseToHome?: () => void;
+  messages: Message[];
+  addMessage: (message: Message) => void;
 }
 
 // Predefined questions and answers
@@ -82,15 +85,15 @@ async function sendMessage(userMessage: string) {
 }
 
 
-export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage, onMinimize, onClose, onMinimizeToHome, onCloseToHome }: ChatBotProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Olá! 👋 Sou o Kombot.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta abaixo ou digite sua dúvida.',
-      isBot: true,
-      timestamp: new Date()
-    }
-  ]);
+export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage, onMinimize, onClose, onMinimizeToHome, onCloseToHome,messages, addMessage }: ChatBotProps) {
+  // const [messages, setMessages] = useState<Message[]>([
+  //   {
+  //     id: '1',
+  //     text: 'Olá! 👋 Sou o Kombot.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta abaixo ou digite sua dúvida.',
+  //     isBot: true,
+  //     timestamp: new Date()
+  //   }
+  // ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -116,7 +119,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    // setMessages(prev => [...prev, userMessage]);
+    addMessage(userMessage);
     setInputText('');
     setIsTyping(true);
 
@@ -136,7 +140,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
         timestamp: new Date(),
       };
 
-      setMessages(prev => [...prev, botMessage]);
+      // setMessages(prev => [...prev, botMessage]);
+      addMessage(botMessage);
     } catch (error) {
       console.error(error);
       const botMessage: Message = {
@@ -145,7 +150,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
         isBot: true,
         timestamp: new Date(),
       };
-      setMessages(prev => [...prev, botMessage]);
+      // setMessages(prev => [...prev, botMessage]);
+      addMessage(botMessage)
     } finally {
       setIsTyping(false);
       scrollToBottom();
@@ -269,7 +275,7 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
         </Card>
 
         {/* Chat Messages */}
-        <Card className={`flex-1 ${isDarkMode ? (isDialog ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700' : 'bg-[#0D1117]') : (isDialog ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600' : 'bg-white/5 backdrop-blur-sm')} ${isDialog ? '' : 'border-white/20'} ${isDialog ? '' : 'rounded-none'} overflow-hidden transition-colors duration-300`}>
+        <Card className={`flex-1 overflow-hidden ${isDarkMode ? (isDialog ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700' : 'bg-[#0D1117]') : (isDialog ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600' : 'bg-white/5 backdrop-blur-sm')} ${isDialog ? '' : 'border-white/20'} ${isDialog ? '' : 'rounded-none'} overflow-hidden transition-colors duration-300`}>
           <div className="h-full overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {messages.map((message) => (
               <motion.div
