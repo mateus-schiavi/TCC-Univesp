@@ -474,3 +474,130 @@ No arquivo `TeamPages.tsx`:
     <Mail className="w-4 h-4" />
 </button> */}
 ```
+
+## 🔧 6. Ajuste no fomulario de Contato
+
+No Arquivo `ContactPage.tsx`:
+
+* Removido o bloco "Empresa e ajustado posição e tamanho dos demais campos:
+
+```ts
+<form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+
+              {/* Container ajustado */}
+              <div className="space-y-4 sm:space-y-6">
+
+                {/* Linha 1: Nome (ocupa 100%) */}
+                <div>
+                  <label className={`block ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm sm:text-base`}>
+                    Nome <span className="text-red-500">*</span>
+                  </label>
+                  <Input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Seu nome completo"
+                    required
+                    className={`w-full ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' : 'bg-gray-50 border-gray-200'} focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base`}
+                  />
+                </div>
+
+                {/* Linha 2: E-mail e Telefone lado a lado */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  <div>
+                    <label className={`block ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm sm:text-base`}>
+                      E-mail <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="seu@email.com"
+                      required
+                      className={`w-full ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' : 'bg-gray-50 border-gray-200'} focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`block ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm sm:text-base`}>
+                      Telefone
+                    </label>
+                    <Input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="(11) 99999-9999"
+                      className={`w-full ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' : 'bg-gray-50 border-gray-200'} focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base`}
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <label className={`block ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm sm:text-base`}>
+                  Mensagem <span className="text-red-500">*</span>
+                </label>
+                <Textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  placeholder="Descreva como podemos ajudá-lo..."
+                  required
+                  rows={6}
+                  className={`w-full ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' : 'bg-gray-50 border-gray-200'} focus:border-blue-500 focus:ring-blue-500 resize-none text-sm sm:text-base`}
+                />
+              </div>
+
+              {/* Botão Enviar */}
+              <Button
+                type="submit"
+                className={`w-full ${isDarkMode ? 'bg-blue-600 hover:bg-[#003A88]' : 'bg-gray-900 hover:bg-[#003A88]'} text-white py-4 sm:py-6 text-base sm:text-lg transition-all duration-300`}
+              >
+                Enviar Mensagem
+              </Button>
+
+              {/* Texto de privacidade */}
+              <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'} text-center mt-4`}>
+                Ao enviar este formulário, você concorda com nossos termos de privacidade.
+              </p>
+            </form>
+
+```
+
+## 🔧 6. Removido telefone e alterado email nos cards para contato
+
+No Arquivo `ContactPage.tsx`:
+
+* Alterado email no card 1 e comentado card2
+* Alterado o sm:grid-cols de 3 para 2
+
+```ts
+{/* Contact Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8"
+        >
+          <Card className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-white/10 border-white/20'} backdrop-blur-sm p-5 sm:p-6 text-center transition-all duration-300 hover:bg-white/15`}>
+            <Mail className="w-7 h-7 sm:w-8 sm:h-8 text-blue-300 mx-auto mb-2 sm:mb-3" />
+            <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Email</h3>
+            <p className="text-blue-200 text-xs sm:text-sm">atendimento@kombotia.com.br</p>
+          </Card>
+
+          {/* <Card className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-white/10 border-white/20'} backdrop-blur-sm p-5 sm:p-6 text-center transition-all duration-300 hover:bg-white/15`}>
+            <Phone className="w-7 h-7 sm:w-8 sm:h-8 text-blue-300 mx-auto mb-2 sm:mb-3" />
+            <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Telefone</h3>
+            <p className="text-blue-200 text-xs sm:text-sm">(11) 9999-9999</p>
+          </Card> */}
+
+          <Card className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-white/10 border-white/20'} backdrop-blur-sm p-5 sm:p-6 text-center transition-all duration-300 hover:bg-white/15`}>
+            <MapPin className="w-7 h-7 sm:w-8 sm:h-8 text-blue-300 mx-auto mb-2 sm:mb-3" />
+            <h3 className="text-white font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Localização</h3>
+            <p className="text-blue-200 text-xs sm:text-sm">São Paulo, Brasil</p>
+          </Card>
+        </motion.div>
+```
