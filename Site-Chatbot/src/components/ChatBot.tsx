@@ -3,9 +3,13 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { Send, User, Maximize2, HelpCircle } from 'lucide-react';
+import { Send, User, Maximize2, HelpCircle, Minus, X } from 'lucide-react';
 import { motion } from 'motion/react';
+import { cn } from './ui/utils';
+import { Message as RemoteMessage} from '../types';
 import robotIcon from '../assets/robotIcon.png';
+import Logo from '../assets/logo.png';
+
 
 interface Message {
   id: string;
@@ -19,6 +23,12 @@ interface ChatBotProps {
   isDarkMode?: boolean;
   playSound?: (type: 'message' | 'click' | 'toggle') => void;
   onExpandToPage?: () => void;
+  onMinimize?: () => void;
+  onClose?: () => void;
+  onMinimizeToHome?: () => void;
+  onCloseToHome?: () => void;
+  messages: Message[];
+  addMessage: (message: Message) => void;
 }
 
 // Predefined questions and answers
@@ -75,15 +85,15 @@ async function sendMessage(userMessage: string) {
 }
 
 
-export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage }: ChatBotProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: 'Olá! 👋 Sou o Cogni.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta abaixo ou digite sua dúvida.',
-      isBot: true,
-      timestamp: new Date()
-    }
-  ]);
+export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExpandToPage, onMinimize, onClose, onMinimizeToHome, onCloseToHome,messages, addMessage }: ChatBotProps) {
+  // const [messages, setMessages] = useState<Message[]>([
+  //   {
+  //     id: '1',
+  //     text: 'Olá! 👋 Sou o Kombot.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta abaixo ou digite sua dúvida.',
+  //     isBot: true,
+  //     timestamp: new Date()
+  //   }
+  // ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -97,53 +107,56 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
   }, [messages]);
 
   const handleSendMessage = async (messageText?: string) => {
-  const textToSend = messageText ?? inputText;
-  if (!textToSend.trim()) return;
+    const textToSend = messageText ?? inputText;
+    if (!textToSend.trim()) return;
 
-  playSound?.('message');
+    playSound?.('message');
 
-  const userMessage: Message = {
-    id: Date.now().toString(),
-    text: textToSend,
-    isBot: false,
-    timestamp: new Date(),
-  };
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: textToSend,
+      isBot: false,
+      timestamp: new Date(),
+    };
 
-  setMessages(prev => [...prev, userMessage]);
-  setInputText('');
-  setIsTyping(true);
+    // setMessages(prev => [...prev, userMessage]);
+    addMessage(userMessage);
+    setInputText('');
+    setIsTyping(true);
 
-  try {
-    // 1️⃣ Primeiro, tenta resposta rápida local
-    let responseText = getBotResponse(textToSend);
+    try {
+      // 1️⃣ Primeiro, tenta resposta rápida local
+      let responseText = getBotResponse(textToSend);
 
-    // 2️⃣ Se getBotResponse retornou a mensagem padrão, manda para o backend
-    if (responseText.startsWith("Olá! 👋")) {
-      responseText = await sendMessage(textToSend);
+      // 2️⃣ Se getBotResponse retornou a mensagem padrão, manda para o backend
+      if (responseText.startsWith("Olá! 👋")) {
+        responseText = await sendMessage(textToSend);
+      }
+
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: responseText,
+        isBot: true,
+        timestamp: new Date(),
+      };
+
+      // setMessages(prev => [...prev, botMessage]);
+      addMessage(botMessage);
+    } catch (error) {
+      console.error(error);
+      const botMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Desculpe, ocorreu um erro ao se comunicar com o servidor.",
+        isBot: true,
+        timestamp: new Date(),
+      };
+      // setMessages(prev => [...prev, botMessage]);
+      addMessage(botMessage)
+    } finally {
+      setIsTyping(false);
+      scrollToBottom();
     }
-
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: responseText,
-      isBot: true,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, botMessage]);
-  } catch (error) {
-    console.error(error);
-    const botMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: "Desculpe, ocorreu um erro ao se comunicar com o servidor.",
-      isBot: true,
-      timestamp: new Date(),
-    };
-    setMessages(prev => [...prev, botMessage]);
-  } finally {
-    setIsTyping(false);
-    scrollToBottom();
-  }
-};
+  };
 
 
 
@@ -183,7 +196,7 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
     }
 
     // Default introduction message
-    return 'Olá! 👋 Sou o Cogni.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta sugerida abaixo ou digite sua dúvida específica sobre qualquer tópico de exatas.';
+    return 'Olá! 👋 Sou o Kombot.IA, seu assistente virtual universitário especializado em exatas.\n\nPosso ajudar com: Matemática, Física, Cálculo, Álgebra Linear e muito mais!\n\nSelecione uma pergunta sugerida abaixo ou digite sua dúvida específica sobre qualquer tópico de exatas.';
   };
 
   const handleQuickQuestion = (question: string) => {
@@ -198,16 +211,22 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className={`${isDialog ? 'h-full flex flex-col' : 'w-full max-w-4xl h-[calc(100vh-8rem)] sm:h-[600px]'} flex flex-col`}>
+      <div className={`${isDialog ? 'h-full flex flex-col' : 'w-full max-w-4xl h-[calc(100vh-8rem)] sm:h-[600px] flex flex-col'}`}>
         {/* Chat Header */}
-        <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300`}>
+        {/* <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300`}> */}
+        <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 ${isDialog ? 'rounded-t-2xl sm:rounded-t-3xl' : 'rounded-t-xl'} transition-colors duration-300 shrink-0 cursor-pointer`}>
           <div className="flex items-center justify-between p-3 sm:p-4">
             <div className="flex items-center space-x-2 sm:space-x-3">
               <Avatar className="w-10 h-10 sm:w-12 sm:h-12 bg-white p-0 border-2 border-white/30">
-                <img src={robotIcon} alt="Cogni.IA" className="w-full h-full object-cover rounded-full" />
+                <img src={robotIcon} alt="Kombot.IA" className="w-full h-full object-cover rounded-full" />
               </Avatar>
               <div>
-                <h2 className="text-base sm:text-lg font-semibold text-white">Cogni.IA</h2>
+                {/* <h2 className="text-base sm:text-lg font-semibold text-white">Kombot.IA</h2> */}
+                <img
+                  src={Logo}
+                  alt="Kombot.IA Logo"
+                  className="h-6 sm:h-8" // Ajuste a altura (h-6, h-8, etc.) conforme necessário
+                />
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                   <p className="text-xs sm:text-sm text-green-300">On-line</p>
@@ -215,23 +234,48 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
               </div>
             </div>
             <div className="flex items-center space-x-1">
-              {isDialog && onExpandToPage && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onExpandToPage}
-                  className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300"
-                  title="Expandir para página completa"
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </Button>
+              {isDialog ? (
+                // Botões para o modo DIÁLOGO
+                <>
+                  {onExpandToPage && (
+                    <Button variant="ghost" size="sm" onClick={onExpandToPage} className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300" title="Expandir para página completa">
+                      <Maximize2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                  {/* BOTÃO DE MINIMIZAR  */}
+                  {onMinimize && (
+                    <Button variant="ghost" size="sm" onClick={onMinimize} className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300" title="Minimizar Chat">
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                  )}
+                  {/* BOTÃO FECHAR */}
+                  {onClose && (
+                    <Button variant="ghost" size="sm" onClick={onClose} className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300" title="Fechar Chat">
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                </>
+              ) : (
+                // Botões para o modo TELA INTEIRA
+                <>
+                  {onMinimizeToHome && (
+                    <Button variant="ghost" size="sm" onClick={onMinimizeToHome} className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300" title="Minimizar para Início">
+                      <Minus className="w-4 h-4" />
+                    </Button>
+                  )}
+                  {onCloseToHome && (
+                    <Button variant="ghost" size="sm" onClick={onCloseToHome} className="text-white hover:bg-[#003A88] w-8 h-8 p-0 transition-all duration-300" title="Fechar e Voltar para Início">
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                </>
               )}
             </div>
           </div>
         </Card>
 
         {/* Chat Messages */}
-        <Card className={`flex-1 ${isDarkMode ? (isDialog ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700' : 'bg-[#0D1117]') : (isDialog ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600' : 'bg-white/5 backdrop-blur-sm')} ${isDialog ? '' : 'border-white/20'} ${isDialog ? '' : 'rounded-none'} overflow-hidden transition-colors duration-300`}>
+        <Card className={`flex-1 overflow-hidden ${isDarkMode ? (isDialog ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700' : 'bg-[#0D1117]') : (isDialog ? 'bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600' : 'bg-white/5 backdrop-blur-sm')} ${isDialog ? '' : 'border-white/20'} ${isDialog ? '' : 'rounded-none'} overflow-hidden transition-colors duration-300`}>
           <div className="h-full overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4">
             {messages.map((message) => (
               <motion.div
@@ -243,8 +287,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                   }`}
               >
                 <Avatar className={`w-7 h-7 sm:w-8 sm:h-8 ${message.isBot
-                    ? 'bg-white p-0'
-                    : 'bg-gradient-to-r from-green-500 to-blue-500'
+                  ? 'bg-white p-0'
+                  : 'bg-gradient-to-r from-green-500 to-blue-500'
                   } flex-shrink-0`}>
                   {message.isBot ? (
                     <img src={robotIcon} alt="Bot" className="w-full h-full object-cover rounded-full" />
@@ -258,10 +302,10 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                 <div className={`flex-1 max-w-[85%] sm:max-w-[80%] ${!message.isBot ? 'flex justify-end' : ''}`}>
                   <div
                     className={`p-2.5 sm:p-3 rounded-xl sm:rounded-2xl ${message.isBot
-                        ? isDarkMode
-                          ? 'bg-gray-700/80 text-white border border-gray-600/50'
-                          : 'bg-white/10 text-white border border-white/20'
-                        : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                      ? isDarkMode
+                        ? 'bg-gray-700/80 text-white border border-gray-600/50'
+                        : 'bg-white/10 text-white border border-white/20'
+                      : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
                       }`}
                   >
                     <p className="text-xs sm:text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
@@ -295,7 +339,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
         </Card>
 
         {/* Quick Questions Panel */}
-        <Card className={`${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-blue-800/95 border-blue-700'} ${isDialog ? '' : 'rounded-none'} transition-colors duration-300`}>
+        {/* <Card className={`${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-blue-800/95 border-blue-700'} ${isDialog ? '' : 'rounded-none'} transition-colors duration-300`}> */}
+        <Card className={`${isDarkMode ? 'bg-gray-800/95 border-gray-700' : 'bg-blue-800/95 border-blue-700'} ${isDialog ? '' : 'rounded-none'} transition-colors duration-300 shrink-0`}>
           <div className="p-2 sm:p-3">
             <div className="flex items-center space-x-2 mb-2">
               <HelpCircle className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
@@ -309,8 +354,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                   size="sm"
                   onClick={() => handleQuickQuestion(qa.question)}
                   className={`text-[10px] sm:text-xs rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 h-auto ${isDarkMode
-                      ? 'text-white bg-gray-700 border-gray-600 hover:bg-[#003A88]'
-                      : 'text-white bg-white/10 border-white/30 hover:bg-[#003A88]'
+                    ? 'text-white bg-gray-700 border-gray-600 hover:bg-[#003A88]'
+                    : 'text-white bg-white/10 border-white/30 hover:bg-[#003A88]'
                     } transition-all duration-300`}
                   title={qa.question}
                 >
@@ -322,7 +367,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
         </Card>
 
         {/* Message Input */}
-        <Card className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-blue-900/90 border-blue-700'} ${isDialog ? 'rounded-b-2xl sm:rounded-b-3xl' : 'rounded-b-xl'} transition-colors duration-300`}>
+        {/* <Card className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-blue-900/90 border-blue-700'} ${isDialog ? 'rounded-b-2xl sm:rounded-b-3xl' : 'rounded-b-xl'} transition-colors duration-300`}> */}
+        <Card className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-blue-900/90 border-blue-700'} ${isDialog ? 'rounded-b-2xl sm:rounded-b-3xl' : 'rounded-b-xl'} transition-colors duration-300 shrink-0`}>
           <div className="p-2.5 sm:p-4">
             <div className="flex space-x-2">
               <Input
@@ -331,8 +377,8 @@ export function ChatBot({ isDialog = false, isDarkMode = false, playSound, onExp
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Digite sua mensagem..."
                 className={`flex-1 text-xs sm:text-sm ${isDarkMode
-                    ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-500'
-                    : 'bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40'
+                  ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-500'
+                  : 'bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:border-white/40'
                   } transition-colors duration-300`}
               />
               <Button

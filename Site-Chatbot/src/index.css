@@ -2177,6 +2177,14 @@
     color: #fff9;
   }
 
+<<<<<<< HEAD
+=======
+.chatbot-dialog-content > button.absolute.top-4.right-4:has(svg) {
+    display: none;
+}
+
+
+>>>>>>> vilander/main
   @supports (color: color-mix(in lab, red, red)) {
     .placeholder\:text-white\/60::placeholder {
       color: color-mix(in oklab, var(--color-white) 60%, transparent);
