@@ -6,13 +6,7 @@ import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Bot, Minimize2, HelpCircle, Star, BookOpen, Calculator, Beaker, Globe } from 'lucide-react';
 import robotIcon from '../assets/robotIcon.png';
 
-
-interface Message {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
+import type { Message } from '../types';
 
 const initialMessages: Message[] = [
   {
@@ -89,23 +83,23 @@ export function DemoPage() {
 
   const getBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
-    
+
     if (message.includes('obrigad')) {
       return 'Por nada! Fico feliz em ajudar. Se tiver mais dúvidas sobre matemática ou qualquer outra matéria, é só perguntar! 😊';
     }
-    
+
     if (message.includes('física') || message.includes('physics')) {
       return 'Física é fascinante! Posso explicar desde conceitos básicos de mecânica até tópicos avançados como física quântica. Qual área te interessa?';
     }
-    
+
     if (message.includes('química') || message.includes('chemistry')) {
       return 'Química pode ser muito divertida! Posso ajudar com química orgânica, inorgânica, físico-química ou até mesmo reações. O que você gostaria de aprender?';
     }
-    
+
     if (message.includes('história') || message.includes('history')) {
       return 'História nos ensina muito sobre o mundo! Que período ou região você gostaria de explorar? História do Brasil, mundial, antiga ou contemporânea?';
     }
-    
+
     return 'Entendo sua dúvida! Posso ajudar com diversas matérias como matemática, física, química, história, português e muito mais. Seja mais específico sobre o que você gostaria de aprender e eu darei uma explicação detalhada!';
   };
 
@@ -238,15 +232,13 @@ export function DemoPage() {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex items-start space-x-3 ${
-                      !message.isBot ? 'flex-row-reverse space-x-reverse' : ''
-                    }`}
+                    className={`flex items-start space-x-3 ${!message.isBot ? 'flex-row-reverse space-x-reverse' : ''
+                      }`}
                   >
-                    <Avatar className={`w-8 h-8 ${
-                      message.isBot 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 p-0' 
-                        : 'bg-gradient-to-r from-green-500 to-blue-500'
-                    }`}>
+                    <Avatar className={`w-8 h-8 ${message.isBot
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 p-0'
+                      : 'bg-gradient-to-r from-green-500 to-blue-500'
+                      }`}>
                       {message.isBot ? (
                         <img src={robotIcon} alt="Bot" className="w-full h-full object-cover rounded-full" />
                       ) : (
@@ -255,27 +247,26 @@ export function DemoPage() {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    
+
                     <div className={`flex-1 max-w-[80%] ${!message.isBot ? 'flex justify-end' : ''}`}>
                       <div
-                        className={`p-3 rounded-2xl ${
-                          message.isBot
-                            ? 'bg-white/10 text-white border border-white/20'
-                            : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                        }`}
+                        className={`p-3 rounded-2xl ${message.isBot
+                          ? 'bg-white/10 text-white border border-white/20'
+                          : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
+                          }`}
                       >
                         <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
                         <p className="text-xs opacity-70 mt-1">
-                          {message.timestamp.toLocaleTimeString('pt-BR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
+                          {message.timestamp.toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </p>
                       </div>
                     </div>
                   </div>
                 ))}
-                
+
                 {isTyping && (
                   <div className="flex items-start space-x-3">
                     <Avatar className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 p-0">
@@ -326,7 +317,7 @@ export function DemoPage() {
               Pronto para começar?
             </h3>
             <p className="text-blue-200 mb-4">
-              Este é apenas um exemplo de como nosso chatbot pode ajudar nos seus estudos. 
+              Este é apenas um exemplo de como nosso chatbot pode ajudar nos seus estudos.
               Experimente você mesmo e veja a diferença!
             </p>
           </div>

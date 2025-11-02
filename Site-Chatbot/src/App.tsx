@@ -6,8 +6,8 @@ import { JavaStudyPage } from './components/JavaStudyPage';
 import { TeamPage } from './components/TeamPage';
 import { ContactPage } from './components/ContactPage';
 import { Button } from './components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './components/ui/dialog';
-import { MessageCircle, X, Moon, Sun } from 'lucide-react';
+import { Dialog, DialogContent } from './components/ui/dialog';
+import { Moon, Sun } from 'lucide-react';
 import { Message } from './types';
 import { cn } from './components/ui/utils';
 import robotIcon from './assets/RobotIcon.png';
@@ -15,7 +15,6 @@ import Logo from './assets/logo.png';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'chatbot' | 'demo' | 'javastudy' | 'team' | 'contact'>('home');
-  const [showFloatingChat, setShowFloatingChat] = useState(true);
   const [isChatDialogOpen, setIsChatDialogOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -187,7 +186,7 @@ export default function App() {
 
       {/* ALTERADO PARA REMOVER O X VERMELHO */}
       {/* Floating Chat Button - Show on all pages except chatbot page */}
-      {currentPage !== 'chatbot' && showFloatingChat && (
+      {currentPage !== 'chatbot' && (
         <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
           <div className="relative group">
             {/* Main chat button */}

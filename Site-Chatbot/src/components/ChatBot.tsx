@@ -5,79 +5,11 @@ import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Maximize2, HelpCircle, Minus, X } from 'lucide-react';
 import { motion } from 'motion/react';
-import { Message as RemoteMessage } from '../types';
+import type { Message, ChatBotProps } from '../types';
 import robotIcon from '../assets/robotIcon.png';
 import Logo from '../assets/logo.png';
 
-interface Message {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
-
-interface ChatBotProps {
-  isDialog?: boolean;
-  isDarkMode?: boolean;
-  playSound?: (type: 'message' | 'click' | 'toggle') => void;
-  onExpandToPage?: () => void;
-  onMinimize?: () => void;
-  onClose?: () => void;
-  onMinimizeToHome?: () => void;
-  onCloseToHome?: () => void;
-  messages: Message[];
-  addMessage: (message: Message) => void;
-}
-
-// Respostas curtas e objetivas
-const predefinedQA = [
-  {
-    question: "Como calcular derivadas?",
-    answer: "Para derivar uma função, use regras básicas: Potência, Soma, Produto e Cadeia. Ex: derivada de x³ → 3x²."
-  },
-  {
-    question: "O que é integral definida?",
-    answer: "Calcula a área sob uma curva entre a e b: ∫_a^b f(x) dx = F(b)-F(a). Usada em áreas, volumes e trabalho."
-  },
-  {
-    question: "Como resolver equações do 2° grau?",
-    answer: "Equação: ax²+bx+c=0. Bhaskara: Δ=b²-4ac → x=(-b±√Δ)/(2a). Ou fatoração quando possível."
-  },
-  {
-    question: "Explique a 2ª Lei de Newton",
-    answer: "F = m × a. Força = massa × aceleração. Aceleração aumenta com força, diminui com massa."
-  },
-  {
-    question: "O que são matrizes?",
-    answer: "Matrizes: números em linhas e colunas. Ex: 2x3 [[a11,a12,a13],[a21,a22,a23]]. Operações: soma, multiplicação, determinante, inversa."
-  },
-  {
-    question: "Como funciona energia cinética?",
-    answer: "Ec = ½·m·v². Quanto maior a velocidade, maior a energia. m = massa, v = velocidade."
-  }
-];
-
-// Função para enviar mensagem ao backend
-async function sendMessageToBackend(userMessage: string) {
-  try {
-    const response = await fetch('http://127.0.0.1:8000/api/chat/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ pergunta: userMessage }),
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${text}`);
-    }
-
-    const data = await response.json();
-    return data.response ?? "Desculpe, resposta vazia do servidor.";
-  } catch (error) {
-    console.error('Erro no backend:', error);
-    return 'Desculpe, ocorreu um erro ao se comunicar com o servidor.';
-  }
-}
+import { predefinedQA, sendMessageToBackend } from './chatbot/index';
 
 // Função para retornar resposta rápida local (predefinedQA)
 function getBotResponse(userMessage: string) {
@@ -130,10 +62,10 @@ export function ChatBot({
       // 2️⃣ Se resposta é genérica, enviar para backend
       if (botText.startsWith("Olá! 👋")) botText = await sendMessageToBackend(userText);
 
-      const botMessage: Message = { id: (Date.now()+1).toString(), text: botText, isBot: true, timestamp: new Date() };
+      const botMessage: Message = { id: (Date.now() + 1).toString(), text: botText, isBot: true, timestamp: new Date() };
       addMessage(botMessage);
     } catch {
-      addMessage({ id: (Date.now()+1).toString(), text: "Erro ao se comunicar com o servidor.", isBot: true, timestamp: new Date() });
+      addMessage({ id: (Date.now() + 1).toString(), text: "Erro ao se comunicar com o servidor.", isBot: true, timestamp: new Date() });
     } finally {
       setIsTyping(false);
     }
@@ -149,9 +81,9 @@ export function ChatBot({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}>
-      
+
       <div className={`${isDialog ? 'h-full flex flex-col' : 'w-full max-w-4xl h-[calc(100vh-8rem)] sm:h-[600px] flex flex-col'}`}>
-        
+
         {/* Header */}
         <Card className={`${isDarkMode ? 'bg-gradient-to-r from-gray-800 to-gray-900' : 'bg-gradient-to-r from-blue-700 to-blue-800'} border-blue-600 rounded-t-xl transition-colors duration-300 shrink-0 cursor-pointer`}>
           <div className="flex items-center justify-between p-3 sm:p-4">
@@ -213,7 +145,7 @@ export function ChatBot({
               {predefinedQA.map((qa, idx) => (
                 <Button key={idx} variant="outline" size="sm" onClick={() => handleQuickQuestion(qa.question)}
                   className={`text-[10px] sm:text-xs rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 h-auto ${isDarkMode ? 'text-white bg-gray-700 border-gray-600 hover:bg-[#003A88]' : 'text-white bg-white/10 border-white/30 hover:bg-[#003A88]'}`}>
-                  {qa.question.length > 20 ? qa.question.substring(0,20)+'...' : qa.question}
+                  {qa.question.length > 20 ? qa.question.substring(0, 20) + '...' : qa.question}
                 </Button>
               ))}
             </div>

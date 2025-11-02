@@ -5,14 +5,7 @@ import { Card } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import { Send, User, Minimize2, HelpCircle, Star, BookOpen, Calculator, Beaker, Globe, Code } from 'lucide-react';
 import robotIcon from '../assets/RobotIcon.png';
-
-
-interface Message {
-  id: string;
-  text: string;
-  isBot: boolean;
-  timestamp: Date;
-}
+import type { Message } from '../types';
 
 const initialMessages: Message[] = [
   {
@@ -89,15 +82,15 @@ export function JavaStudyPage() {
 
   const getBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
-    
+
     if (message.includes('orientação') || message.includes('objetos') || message.includes('oo')) {
       return 'Orientação a Objetos é o coração do Java! Vou explicar os 4 pilares:\n\n1. **Encapsulamento**: Proteger dados usando private/public\n2. **Herança**: Reutilizar código através de extends\n3. **Polimorfismo**: Mesmo método, comportamentos diferentes\n4. **Abstração**: Esconder complexidade\n\nQuer um exemplo prático de algum deles?';
     }
-    
+
     if (message.includes('herança') || message.includes('extends')) {
       return 'Herança em Java permite criar classes baseadas em outras:\n\n```java\npublic class Animal {\n    protected String nome;\n    public void emitirSom() { }\n}\n\npublic class Cachorro extends Animal {\n    @Override\n    public void emitirSom() {\n        System.out.println("Au au!");\n    }\n}\n```\n\nA classe Cachorro herda atributos e métodos de Animal!';
     }
-    
+
     if (message.includes('exceç') || message.includes('exception')) {
       return 'Exceções em Java são fundamentais!\n\n```java\ntry {\n    int resultado = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println("Erro: " + e.getMessage());\n} finally {\n    System.out.println("Sempre executa");\n}\n```\n\nLembre: try-catch protege seu código de erros inesperados!';
     }
@@ -105,7 +98,7 @@ export function JavaStudyPage() {
     if (message.includes('obrigad')) {
       return 'Por nada! Estou aqui para te ajudar a dominar Java. Continue praticando e você vai arrasar na prova! 💪🚀';
     }
-    
+
     return 'Entendi! Posso explicar qualquer tópico de Java em detalhes. Pergunte sobre: Orientação a Objetos, Herança, Polimorfismo, Exceções, Collections, ou qualquer outro conceito que você precise estudar!';
   };
 
@@ -250,15 +243,13 @@ export function JavaStudyPage() {
                 {messages.map((message) => (
                   <div
                     key={message.id}
-                    className={`flex items-start space-x-3 ${
-                      !message.isBot ? 'flex-row-reverse space-x-reverse' : ''
-                    }`}
+                    className={`flex items-start space-x-3 ${!message.isBot ? 'flex-row-reverse space-x-reverse' : ''
+                      }`}
                   >
-                    <Avatar className={`w-8 h-8 flex-shrink-0 ${
-                      message.isBot 
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 p-0' 
+                    <Avatar className={`w-8 h-8 flex-shrink-0 ${message.isBot
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 p-0'
                         : 'bg-gradient-to-r from-green-500 to-blue-500'
-                    }`}>
+                      }`}>
                       {message.isBot ? (
                         <img src={robotIcon} alt="Bot" className="w-full h-full object-cover rounded-full" />
                       ) : (
@@ -267,27 +258,26 @@ export function JavaStudyPage() {
                         </AvatarFallback>
                       )}
                     </Avatar>
-                    
+
                     <div className={`flex-1 max-w-[80%] ${!message.isBot ? 'flex justify-end' : ''}`}>
                       <div
-                        className={`p-3 rounded-2xl ${
-                          message.isBot
+                        className={`p-3 rounded-2xl ${message.isBot
                             ? 'bg-white/10 text-white border border-white/20'
                             : 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                        }`}
+                          }`}
                       >
                         <p className="text-sm leading-relaxed whitespace-pre-line">{message.text}</p>
                         <p className="text-xs opacity-70 mt-1">
-                          {message.timestamp.toLocaleTimeString('pt-BR', { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
+                          {message.timestamp.toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </p>
                       </div>
                     </div>
                   </div>
                 ))}
-                
+
                 {isTyping && (
                   <div className="flex items-start space-x-3">
                     <Avatar className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 p-0">

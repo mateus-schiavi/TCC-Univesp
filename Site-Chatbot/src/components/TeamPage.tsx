@@ -1,6 +1,6 @@
 import { Card } from './ui/card';
 import { Avatar } from './ui/avatar';
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { Github, Linkedin } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
@@ -20,7 +20,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
     {
       name: "Elessandro Marquezim",
       role: "Gerente de Projeto/Product Owner e Experiência do Usuário",
-      image: "../src/assets/fotoElessandroMarquezim.png"    
+      image: "../src/assets/fotoElessandroMarquezim.png"
     },
     {
       name: "Rafael Ferreira",
@@ -30,38 +30,38 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
     {
       name: "Aline Vieira",
       role: "Gerente de Projeto/ Product Owner e Especialista em Educação",
-      image: "../src/assets/fotoAlineVieira.png"    
+      image: "../src/assets/fotoAlineVieira.png"
     },
     {
       name: "Elias carvalho",
       role: "Gerente de Projeto/ Product Owner e Analista de Dados",
-      image: "../src/assets/fotoEliascarvalho.png"    
-    },    
+      image: "../src/assets/fotoEliascarvalho.png"
+    },
     {
       name: "Agatha Freitas",
       role: "Engenheira de IA/Desenvolvedora Frontend e UX/UI Designer",
       image: "../src/assets/fotoAgathaFreitas.png"
-    },    
+    },
     {
       name: "Mateus Schiavi",
       role: "Analista de Dados/ Desenvolvedor Backend e Engenheiro de IA",
-      image: "../src/assets/fotoMateusSchiavi.png"    
+      image: "../src/assets/fotoMateusSchiavi.png"
     },
     {
       name: "Ricardo Gazzi",
       role: "Gerente de Projeto/ Product Owner e QA/tester",
-      image: "../src/assets/fotoRicardoGazzi.png"    
+      image: "../src/assets/fotoRicardoGazzi.png"
     },
 
     {
       name: "Marcelo Junior",
       role: "Desenvolvedor Backend/Frotend e Experiência do Usuário",
-      image: "../src/assets/fotoMarceloJunior.png"    
+      image: "../src/assets/fotoMarceloJunior.png"
     }
   ];
 
   return (
-    <motion.div 
+    <motion.div
       className={`min-h-screen px-4 sm:px-6 py-12 sm:py-20 transition-colors duration-300 ${isDarkMode ? 'bg-[#0D1117]' : ''}`}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
     >
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           className="text-center mb-12 sm:mb-16"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ export function TeamPage({ isDarkMode = false }: TeamPageProps) {
         </div>
 
         {/* Stats Section */}
-        {/* <motion.div 
+        {/* <motion.div
           className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

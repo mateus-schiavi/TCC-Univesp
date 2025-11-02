@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { Card } from './ui/card';
 import { motion } from 'motion/react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react';
 
 interface ContactPageProps {
   isDarkMode?: boolean;
@@ -121,7 +121,7 @@ export function ContactPage({ isDarkMode = false }: ContactPageProps) {
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <label className={`block ${isDarkMode ? 'text-gray-200' : 'text-gray-700'} mb-2 text-sm sm:text-base`}>
                   Mensagem <span className="text-red-500">*</span>
