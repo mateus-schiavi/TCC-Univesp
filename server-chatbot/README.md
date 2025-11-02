@@ -3,6 +3,6 @@
 Para iniciar o projeto:
 
 ```sh
-pip install -r requeriments.txt
+pip install -r requirements.txt
 python manage.py runserver
 ```
