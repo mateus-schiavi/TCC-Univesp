@@ -33,7 +33,7 @@ def consultar_ollama(pergunta, historico=None):
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
-            json={"model": "gpt-oss:20b-cloud", "prompt": prompt, "stream": False},
+            json={"model": "mistral", "prompt": prompt, "stream": False},
             timeout=60
         )
         if response.status_code == 200:
