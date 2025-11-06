@@ -33,7 +33,7 @@ def consultar_ollama(pergunta, historico=None):
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
-            json={"model": "mistral:7b-instruct-q4_K_M", "prompt": prompt, "stream": False},
+            json={"model": "mistral:latest", "prompt": prompt, "stream": False},
             timeout=60
         )
         if response.status_code == 200:
