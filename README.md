@@ -1,5 +1,5 @@
 
-  # Site com Chatbot
+  # Site com Chatbot educacional para universitários
 
   This is a code bundle for Modelo de Site com Chatbot. The original project is available at https://www.figma.com/design/WDcP7bAHaFlyog8JWbyLYd/Modelo-de-Site-com-Chatbot.
 
